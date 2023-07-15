@@ -76,14 +76,14 @@ const forgetPassword = async (req, res) => {
 
 const changePassword =  async(req, res) =>{
     try{
-        const {otp, pass} = req.body
+        const {otp, password} = req.body
         const user = await User.findOne({otp: otp})
         if(user){
             const otp2 = randomstring.generate({
                 length: 6,
                 charset: 'numeric'
               });
-            const newPass = await bcrypt.hash(pass, 10)
+            const newPass = await bcrypt.hash(password, 10)
             const updatePass = await User.findByIdAndUpdate(user._id, {password: newPass, otp: otp2}, {new: true, useFindAndModify: false})
 
             if(updatePass){

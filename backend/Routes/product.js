@@ -26,6 +26,10 @@ router.get('/new', getNewProduct);
 //new Products
 router.get("/featured", getFeaturedProducts)
 
+//best seller
+
+router.get('/best', bestSellerProduct);
+
 //get discount product
 
 router.get('/:id/discount', getDiscountedProduct);
@@ -50,12 +54,10 @@ router.delete('/:id', protect, admin, deleteProduct)
 //update discountedProduct(admin)
 router.put('/:id/discount', protect, admin, updateDiscountedProduct)
 
-//best seller
 
-router.get('/best', bestSellerProduct);
 //create product review(users only)
 
-router.post('/:id/review', user, createProductReview);
+router.post('/:id/review', protect, user, createProductReview);
 
 //get product review(everyone)
 

@@ -36,6 +36,22 @@ const getAllProduct = async(req, res) => {
         throw new Error(err)
     }
 };
+
+const bestSellerProduct = async(req, res) => {
+    try{
+        const products = await Product.find({}).sort({ salesCount: -1 }).limit(10);
+
+        if (products.length > 0) {
+          const bestSellerProduct = products[0];
+          res.json({ message: "Best-selling product found", bestSellerProduct });
+        } else {
+          res.json({ message: "No best-selling product found" });
+        }
+    }catch(err){
+        throw new Error(err)
+    }
+}
+
 const getFeaturedProducts = async (req, res) => {
 	try {
 		const product = await Product.find({}).limit(5)
@@ -77,20 +93,6 @@ const getNewProduct = async(req, res) => {
     }
 }
 
-const bestSellerProduct = async(req, res) => {
-    try{
-        const products = await Product.find({}).sort({ salesCount: -1 }).limit(10);
-
-        if (products.length > 0) {
-          const bestSellerProduct = products[0];
-          res.json({ message: "Best-selling product found", bestSellerProduct });
-        } else {
-          res.json({ message: "No best-selling product found" });
-        }
-    }catch(err){
-        throw new Error(err)
-    }
-}
 
 const getRelatedProduct = async(req, res) => {
     try {
@@ -153,7 +155,7 @@ const updateProduct = async(req, res) => {
             })
 
             if(updateProduct){
-                res.json({message: 'product updated', product})
+                res.json({message: 'product updated', updateProduct})
             }else{
                 res.status(400).json({message: 'unable to update please try again'})
             }
@@ -207,7 +209,7 @@ const updateDiscountedProduct = async(req, res) => {
 const createProductReview = async(req, res) => {
     try{
         const productId = req.params.id;
-        const { name, date, Comment, rating, user } = req.body;
+        const {comment, rating } = req.body;
     
         const product = await Product.findById(productId);
     
@@ -215,14 +217,14 @@ const createProductReview = async(req, res) => {
           res.status(400).json({ message: "Product not found" });
         } else {
           const review = {
-            name,
-            date,
-            Comment,
+            name: req.user.name,
+            date: new Date(),
+            comment: comment,
             rating,
-            user
+            user: req.user.id
           };
     
-          product.reviews.push(review);
+          product.review.push(review);
           await product.save();
     
           res.json({ message: "Product review created successfully", product });

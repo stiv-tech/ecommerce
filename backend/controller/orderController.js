@@ -4,8 +4,10 @@ import randomstring from 'randomstring'
 const createPODorder = async(req, res) => {
   try {
     const {orderItems, address} = req.body
+    console.log(orderItems)
+    const totalPrice = orderItems.reduce((acc, item) => acc + item.price * item.qty, 0)
 
-    const totalPrice = orderItems.reduce((acc, item) => acc + (item.price * item.qty), 0)
+    console.log(totalPrice)
 
     const orderRef = randomstring.generate({
       length: 10,
@@ -14,7 +16,7 @@ const createPODorder = async(req, res) => {
 
     const newOrder = new Order({
       orderItems,
-      totalPrice,
+      totalPrice, 
       address,
       user: req.user._id,
       orderRef
